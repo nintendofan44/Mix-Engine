@@ -16,8 +16,7 @@ import flixel.util.FlxDestroyUtil;
 /**
  * stolen from https://github.com/HaxeFlixel/flixel/blob/master/flixel/system/debug/stats/StatsGraph.hx
  */
-class HitGraph extends Sprite
-{
+class HitGraph extends Sprite {
 	static inline var AXIS_COLOR:FlxColor = 0xffffff;
 	static inline var AXIS_ALPHA:Float = 0.5;
 	inline static var HISTORY_MAX:Int = 30;
@@ -45,15 +44,14 @@ class HitGraph extends Sprite
 	var _labelWidth:Int;
 	var _label:String;
 
-	public function new(X:Int, Y:Int, Width:Int, Height:Int)
-	{
+	public function new(X:Int, Y:Int, Width:Int, Height:Int) {
 		super();
 		x = X;
 		y = Y;
 		_width = Width;
 		_height = Height;
 
-		var bm = new BitmapData(Width,Height);
+		var bm = new BitmapData(Width, Height);
 		bm.draw(this);
 		bitmap = new Bitmap(bm);
 
@@ -62,8 +60,8 @@ class HitGraph extends Sprite
 
 		var ts = Math.floor((PlayState.rep.replay.sf / 60) * 1000) / 166;
 
-		var early = createTextField(10,10,FlxColor.WHITE,12);
-		var late = createTextField(10,_height - 20,FlxColor.WHITE,12);
+		var early = createTextField(10, 10, FlxColor.WHITE, 12);
+		var late = createTextField(10, _height - 20, FlxColor.WHITE, 12);
 
 		early.text = "Early (" + -166 * ts + "ms)";
 		late.text = "Late (" + 166 * ts + "ms)";
@@ -79,8 +77,7 @@ class HitGraph extends Sprite
 	/**
 	 * Redraws the axes of the graph.
 	 */
-	function drawAxes():Void
-	{
+	function drawAxes():Void {
 		var gfx = _axis.graphics;
 		gfx.clear();
 		gfx.lineStyle(1, AXIS_COLOR, AXIS_ALPHA);
@@ -95,16 +92,13 @@ class HitGraph extends Sprite
 
 		gfx.moveTo(0, _height / 2);
 		gfx.lineTo(_width, _height / 2);
-		
 	}
 
-	public static function createTextField(X:Float = 0, Y:Float = 0, Color:FlxColor = FlxColor.WHITE, Size:Int = 12):TextField
-	{
+	public static function createTextField(X:Float = 0, Y:Float = 0, Color:FlxColor = FlxColor.WHITE, Size:Int = 12):TextField {
 		return initTextField(new TextField(), X, Y, Color, Size);
 	}
 
-	public static function initTextField<T:TextField>(tf:T, X:Float = 0, Y:Float = 0, Color:FlxColor = FlxColor.WHITE, Size:Int = 12):T
-	{
+	public static function initTextField<T:TextField>(tf:T, X:Float = 0, Y:Float = 0, Color:FlxColor = FlxColor.WHITE, Size:Int = 12):T {
 		tf.x = X;
 		tf.y = Y;
 		tf.multiline = false;
@@ -121,9 +115,7 @@ class HitGraph extends Sprite
 		return tf;
 	}
 
-	function drawJudgementLine(ms:Float):Void
-	{
-
+	function drawJudgementLine(ms:Float):Void {
 		var gfx:Graphics = graphics;
 
 		gfx.lineStyle(1, graphColor, 0.3);
@@ -142,7 +134,7 @@ class HitGraph extends Sprite
 
 		var graphX = _axis.x + 1;
 
-		gfx.drawRect(graphX,pointY, _width,1);
+		gfx.drawRect(graphX, pointY, _width, 1);
 
 		gfx.lineStyle(1, graphColor, 1);
 	}
@@ -150,8 +142,7 @@ class HitGraph extends Sprite
 	/**
 	 * Redraws the graph based on the values stored in the history.
 	 */
-	function drawGraph():Void
-	{
+	function drawGraph():Void {
 		var gfx:Graphics = graphics;
 		gfx.clear();
 		gfx.lineStyle(1, graphColor, 1);
@@ -191,35 +182,31 @@ class HitGraph extends Sprite
 		var range:Float = Math.max(maxValue - minValue, maxValue * 0.1);
 		var graphX = _axis.x + 1;
 
-		if (showInput)
-		{
-			for (i in 0...PlayState.rep.replay.ana.anaArray.length)
-			{
+		if (showInput) {
+			for (i in 0...PlayState.rep.replay.ana.anaArray.length) {
 				var ana = PlayState.rep.replay.ana.anaArray[i];
 
 				var value = (ana.key * 25 - minValue) / range;
 
 				if (ana.hit)
 					gfx.beginFill(0xFFFF00);
-				else 
+				else
 					gfx.beginFill(0xC2B280);
 
 				if (ana.hitTime < 0)
 					continue;
 
 				var pointY = (-value * _height - 1) + _height;
-				gfx.drawRect(graphX + fitX(ana.hitTime), pointY,2,2);
+				gfx.drawRect(graphX + fitX(ana.hitTime), pointY, 2, 2);
 				gfx.endFill();
 			}
 		}
 
-		for (i in 0...history.length)
-		{
+		for (i in 0...history.length) {
 			var value = (history[i][0] - minValue) / range;
 			var judge = history[i][1];
 
-			switch(judge)
-			{
+			switch (judge) {
 				case "sick":
 					gfx.beginFill(0x00FFFF);
 				case "good":
@@ -236,43 +223,37 @@ class HitGraph extends Sprite
 			var pointY = (-value * _height - 1) + _height;
 
 			/*if (i == 0)
-				gfx.moveTo(graphX, _axis.y + pointY);*/
-			gfx.drawRect(fitX(history[i][2]), pointY,4,4);
+				gfx.moveTo(graphX, _axis.y + pointY); */
+			gfx.drawRect(fitX(history[i][2]), pointY, 4, 4);
 
 			gfx.endFill();
 		}
 
-
-		var bm = new BitmapData(_width,_height);
+		var bm = new BitmapData(_width, _height);
 		bm.draw(this);
 		bitmap = new Bitmap(bm);
 	}
 
-	public function fitX(x:Float)
-	{
+	public function fitX(x:Float) {
 		return (x / FlxG.sound.music.length) * width;
 	}
-	
-	public function addToHistory(diff:Float, judge:String, time:Float)
-	{
-		history.push([diff,judge, time]);
+
+	public function addToHistory(diff:Float, judge:String, time:Float) {
+		history.push([diff, judge, time]);
 	}
 
-	public function update():Void
-	{
+	public function update():Void {
 		drawGraph();
 	}
 
-	public function average():Float
-	{
+	public function average():Float {
 		var sum:Float = 0;
 		for (value in history)
 			sum += value;
 		return sum / history.length;
 	}
 
-	public function destroy():Void
-	{
+	public function destroy():Void {
 		_axis = FlxDestroyUtil.removeChild(this, _axis);
 		history = null;
 	}

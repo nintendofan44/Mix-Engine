@@ -1,6 +1,5 @@
 {
 	"lineEnds": {
-		"leftCurly": "both",
 		"rightCurly": "both",
 		"emptyCurly": "break",
 		"objectLiteralCurly": {
@@ -8,6 +7,7 @@
 		}
 	},
 	"sameLine": {
+		"ifBody": "keep",
 		"ifElse": "next",
 		"doWhile": "next",
 		"tryBody": "next",

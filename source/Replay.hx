@@ -11,14 +11,14 @@ import haxe.Json;
 import flixel.input.keyboard.FlxKey;
 import openfl.utils.Dictionary;
 
-class Ana
-{
+class Ana {
 	public var hitTime:Float;
 	public var nearestNote:Array<Dynamic>;
 	public var hit:Bool;
 	public var hitJudge:String;
 	public var key:Int;
-	public function new(_hitTime:Float,_nearestNote:Array<Dynamic>,_hit:Bool,_hitJudge:String, _key:Int) {
+
+	public function new(_hitTime:Float, _nearestNote:Array<Dynamic>, _hit:Bool, _hitJudge:String, _key:Int) {
 		hitTime = _hitTime;
 		nearestNote = _nearestNote;
 		hit = _hit;
@@ -27,8 +27,7 @@ class Ana
 	}
 }
 
-class Analysis
-{
+class Analysis {
 	public var anaArray:Array<Ana>;
 
 	public function new() {
@@ -36,8 +35,7 @@ class Analysis
 	}
 }
 
-typedef ReplayJSON =
-{
+typedef ReplayJSON = {
 	public var replayGameVer:String;
 	public var timestamp:Date;
 	public var songName:String;
@@ -50,17 +48,16 @@ typedef ReplayJSON =
 	public var ana:Analysis;
 }
 
-class Replay
-{
+class Replay {
 	public static var version:String = "1.2"; // replay file version
 
 	public var path:String = "";
 	public var replay:ReplayJSON;
-	public function new(path:String)
-	{
+
+	public function new(path:String) {
 		this.path = path;
 		replay = {
-			songName: "No Song Found", 
+			songName: "No Song Found",
 			songDiff: 1,
 			noteSpeed: 1.5,
 			isDownscroll: false,
@@ -73,8 +70,7 @@ class Replay
 		};
 	}
 
-	public static function LoadReplay(path:String):Replay
-    {
+	public static function LoadReplay(path:String):Replay {
 		var rep:Replay = new Replay(path);
 
 		rep.LoadFromJSON();
@@ -84,8 +80,7 @@ class Replay
 		return rep;
 	}
 
-	public function SaveReplay(notearray:Array<Dynamic>, judge:Array<String>, ana:Analysis)
-	{
+	public function SaveReplay(notearray:Array<Dynamic>, judge:Array<String>, ana:Analysis) {
 		var json = {
 			"songName": PlayState.SONG.song,
 			"songDiff": PlayState.storyDifficulty,
@@ -100,7 +95,7 @@ class Replay
 		};
 
 		var data:String = Json.stringify(json);
-		
+
 		var time = Date.now().getTime();
 
 		#if sys
@@ -114,20 +109,16 @@ class Replay
 		#end
 	}
 
-	public function LoadFromJSON()
-	{
+	public function LoadFromJSON() {
 		#if sys
 		trace('loading ' + Sys.getCwd() + 'assets/replays/' + path + ' replay...');
-		try
-		{
+		try {
 			var repl:ReplayJSON = cast Json.parse(File.getContent(Sys.getCwd() + "assets/replays/" + path));
 			replay = repl;
 		}
-		catch(e)
-		{
+		catch (e) {
 			trace('failed!\n' + e.message);
 		}
 		#end
 	}
-
 }

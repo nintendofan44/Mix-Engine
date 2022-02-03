@@ -13,8 +13,7 @@ import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
 
-class Main extends Sprite
-{
+class Main extends Sprite {
 	var gameWidth:Int = 1280; // Width of the game in pixels (might be less / more in actual pixels depending on your zoom).
 	var gameHeight:Int = 720; // Height of the game in pixels (might be less / more in actual pixels depending on your zoom).
 	var initialState:Class<FlxState> = TitleState; // The FlxState the game starts with.
@@ -27,47 +26,38 @@ class Main extends Sprite
 
 	// You can pretty much ignore everything from here on - your code should go in your states.
 
-	public static function main():Void
-	{
-
-		// quick checks 
+	public static function main():Void {
+		// quick checks
 
 		Lib.current.addChild(new Main());
 	}
 
-	public function new()
-	{
+	public function new() {
 		super();
 
-		if (stage != null)
-		{
+		if (stage != null) {
 			init();
 		}
-		else
-		{
+		else {
 			addEventListener(Event.ADDED_TO_STAGE, init);
 		}
 	}
 
 	public static var webmHandler:WebmHandler;
 
-	private function init(?E:Event):Void
-	{
-		if (hasEventListener(Event.ADDED_TO_STAGE))
-		{
+	private function init(?E:Event):Void {
+		if (hasEventListener(Event.ADDED_TO_STAGE)) {
 			removeEventListener(Event.ADDED_TO_STAGE, init);
 		}
 
 		setupGame();
 	}
 
-	private function setupGame():Void
-	{
+	private function setupGame():Void {
 		var stageWidth:Int = Lib.current.stage.stageWidth;
 		var stageHeight:Int = Lib.current.stage.stageHeight;
 
-		if (zoom == -1)
-		{
+		if (zoom == -1) {
 			var ratioX:Float = stageWidth / gameWidth;
 			var ratioY:Float = stageHeight / gameHeight;
 			zoom = Math.min(ratioX, ratioY);
@@ -82,12 +72,11 @@ class Main extends Sprite
 		game = new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen);
 		#end
 		addChild(game);
-		
+
 		#if !mobile
 		fpsCounter = new FPS(10, 3, 0xFFFFFF);
 		addChild(fpsCounter);
 		toggleFPS(FlxG.save.data.fps);
-
 		#end
 	}
 
@@ -99,23 +88,19 @@ class Main extends Sprite
 		fpsCounter.visible = fpsEnabled;
 	}
 
-	public function changeFPSColor(color:FlxColor)
-	{
+	public function changeFPSColor(color:FlxColor) {
 		fpsCounter.textColor = color;
 	}
 
-	public function setFPSCap(cap:Float)
-	{
+	public function setFPSCap(cap:Float) {
 		openfl.Lib.current.stage.frameRate = cap;
 	}
 
-	public function getFPSCap():Float
-	{
+	public function getFPSCap():Float {
 		return openfl.Lib.current.stage.frameRate;
 	}
 
-	public function getFPS():Float
-	{
+	public function getFPS():Float {
 		return fpsCounter.currentFPS;
 	}
 }

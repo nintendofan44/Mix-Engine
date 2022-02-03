@@ -6,28 +6,23 @@ import openfl.display.Sprite;
 import webm.*;
 #end
 
-class WebmHandler
-{
+class WebmHandler {
 	#if desktop
 	public var webm:WebmPlayer;
 	public var vidPath:String = "";
 	public var io:WebmIo;
 	public var initialized:Bool = false;
-	
-	public function new()
-	{
+
+	public function new() {
 	}
-	
-	public function source(?vPath:String):Void
-	{
-		if (vPath != null && vPath.length > 0)
-		{
-		vidPath = vPath;
+
+	public function source(?vPath:String):Void {
+		if (vPath != null && vPath.length > 0) {
+			vidPath = vPath;
 		}
 	}
-	
-	public function makePlayer():Void
-	{
+
+	public function makePlayer():Void {
 		io = new WebmIoFile(vidPath);
 		webm = new WebmPlayer();
 		webm.fuck(io, false);
@@ -46,124 +41,104 @@ class WebmHandler
 		webm.visible = false;
 		initialized = true;
 	}
-	
-	public function updatePlayer():Void
-	{
+
+	public function updatePlayer():Void {
 		io = new WebmIoFile(vidPath);
 		webm.fuck(io, false);
 	}
-	
-	public function play():Void
-	{
-		if (initialized)
-		{
+
+	public function play():Void {
+		if (initialized) {
 			webm.play();
 		}
 	}
-	
-	public function stop():Void
-	{
-		if (initialized)
-		{
+
+	public function stop():Void {
+		if (initialized) {
 			webm.stop();
 		}
 	}
-	
-	public function restart():Void
-	{
-		if (initialized)
-		{
+
+	public function restart():Void {
+		if (initialized) {
 			webm.restart();
 		}
 	}
-	
-	public function update(elapsed:Float)
-	{
+
+	public function update(elapsed:Float) {
 		webm.x = GlobalVideo.calc(0);
 		webm.y = GlobalVideo.calc(1);
 		webm.width = GlobalVideo.calc(2);
 		webm.height = GlobalVideo.calc(3);
 	}
-	
+
 	public var stopped:Bool = false;
 	public var restarted:Bool = false;
 	public var played:Bool = false;
 	public var ended:Bool = false;
 	public var paused:Bool = false;
-	
-	public function pause():Void
-	{
+
+	public function pause():Void {
 		webm.changePlaying(false);
 		paused = true;
 	}
-	
-	public function resume():Void
-	{
+
+	public function resume():Void {
 		webm.changePlaying(true);
 		paused = false;
 	}
-	
-	public function togglePause():Void
-	{
-		if (paused)
-		{
+
+	public function togglePause():Void {
+		if (paused) {
 			resume();
-		} else {
+		}
+		else {
 			pause();
 		}
 	}
-	
-	public function clearPause():Void
-	{
+
+	public function clearPause():Void {
 		paused = false;
 		webm.removePause();
 	}
-	
-	public function onStop():Void
-	{
+
+	public function onStop():Void {
 		stopped = true;
 	}
-	
-	public function onRestart():Void
-	{
+
+	public function onRestart():Void {
 		restarted = true;
 	}
-	
-	public function onPlay():Void
-	{
+
+	public function onPlay():Void {
 		played = true;
 	}
-	
-	public function onEnd():Void
-	{
+
+	public function onEnd():Void {
 		trace("IT ENDED!");
 		ended = true;
 	}
-	
-	public function alpha():Void
-	{
+
+	public function alpha():Void {
 		webm.alpha = GlobalVideo.daAlpha1;
 	}
-	
-	public function unalpha():Void
-	{
+
+	public function unalpha():Void {
 		webm.alpha = GlobalVideo.daAlpha2;
 	}
-	
-	public function hide():Void
-	{
+
+	public function hide():Void {
 		webm.visible = false;
 	}
-	
-	public function show():Void
-	{
+
+	public function show():Void {
 		webm.visible = true;
 	}
 	#else
 	public var webm:Sprite;
-	public function new()
-	{
-	trace("THIS IS ANDROID! or some shit...");
+
+	public function new() {
+		trace("THIS IS ANDROID! or some shit...");
 	}
 	#end
 }
