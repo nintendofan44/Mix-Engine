@@ -90,7 +90,7 @@ class PauseSubState extends MusicBeatSubstate {
 
 		for (i in 0...menuItems.length) {
 			var songText:Alphabet = new Alphabet(0, (70 * i) + 30, menuItems[i], true, false);
-			songText.isMenuItem = true;
+			songText.alphabetType = "Classic";
 			songText.targetY = i;
 			grpMenuShit.add(songText);
 		}
@@ -160,7 +160,7 @@ class PauseSubState extends MusicBeatSubstate {
 
 				for (i in 0...menuItems.length) {
 					var songText:Alphabet = new Alphabet(0, (70 * i) + 30, menuItems[i], true, false);
-					songText.isMenuItem = true;
+					songText.alphabetType = "Classic";
 					songText.targetY = i;
 					grpMenuShit.add(songText);
 				}
@@ -186,7 +186,7 @@ class PauseSubState extends MusicBeatSubstate {
 
 				for (i in 0...menuItems.length) {
 					var songText:Alphabet = new Alphabet(0, (70 * i) + 30, menuItems[i], true, false);
-					songText.isMenuItem = true;
+					songText.alphabetType = "Classic";
 					songText.targetY = i;
 					grpMenuShit.add(songText);
 				}

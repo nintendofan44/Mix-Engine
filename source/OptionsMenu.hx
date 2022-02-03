@@ -83,8 +83,8 @@ class OptionsMenu extends MusicBeatState {
 		add(grpControls);
 
 		for (i in 0...options.length) {
-			var controlLabel:Alphabet = new Alphabet(0, (70 * i) + 30, options[i].getName(), true, false, true);
-			controlLabel.isMenuItem = true;
+			var controlLabel:Alphabet = new Alphabet(0, (70 * i) + 30, options[i].getName(), true, false);
+			controlLabel.alphabetType = "Classic";
 			controlLabel.targetY = i;
 			grpControls.add(controlLabel);
 			// DONT PUT X IN THE FIRST PARAMETER OF new ALPHABET() !!
@@ -127,7 +127,7 @@ class OptionsMenu extends MusicBeatState {
 				grpControls.clear();
 				for (i in 0...options.length) {
 					var controlLabel:Alphabet = new Alphabet(0, (70 * i) + 30, options[i].getName(), true, false);
-					controlLabel.isMenuItem = true;
+					controlLabel.alphabetType = "Classic";
 					controlLabel.targetY = i;
 					grpControls.add(controlLabel);
 					// DONT PUT X IN THE FIRST PARAMETER OF new ALPHABET() !!
@@ -214,7 +214,7 @@ class OptionsMenu extends MusicBeatState {
 			if (controls.ACCEPT) {
 				if (isCat) {
 					if (currentSelectedCat.getOptions()[curSelected].press()) {
-						grpControls.members[curSelected].reType(currentSelectedCat.getOptions()[curSelected].getDisplay());
+						grpControls.members[curSelected].changeText(currentSelectedCat.getOptions()[curSelected].getDisplay());
 						trace(currentSelectedCat.getOptions()[curSelected].getDisplay());
 					}
 				}
@@ -224,7 +224,7 @@ class OptionsMenu extends MusicBeatState {
 					grpControls.clear();
 					for (i in 0...currentSelectedCat.getOptions().length) {
 						var controlLabel:Alphabet = new Alphabet(0, (70 * i) + 30, currentSelectedCat.getOptions()[i].getDisplay(), true, false);
-						controlLabel.isMenuItem = true;
+						controlLabel.alphabetType = "Classic";
 						controlLabel.targetY = i;
 						grpControls.add(controlLabel);
 						// DONT PUT X IN THE FIRST PARAMETER OF new ALPHABET() !!
