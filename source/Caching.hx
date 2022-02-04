@@ -159,7 +159,7 @@ class Caching extends MusicBeatState
 		super.create();
 
 		FlxG.save.bind('funkin', 'ninjamuffin99');
-		KadeEngineData.initSave();
+		MixEngineData.initSave();
 
 		Conductor.changeBPM(108);
 

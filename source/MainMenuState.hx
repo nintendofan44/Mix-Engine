@@ -37,7 +37,7 @@ class MainMenuState extends MusicBeatState {
 
 	public static var nightly:String = "";
 
-	public static var kadeEngineVer:String = "1.5.4" + nightly;
+	public static var mixEngineVer:String = "1.5.4" + nightly;
 	public static var gameVer:String = "0.2.7.1";
 
 	var magenta:FlxSprite;
@@ -108,7 +108,7 @@ class MainMenuState extends MusicBeatState {
 
 		FlxG.camera.follow(camFollow, null, 0.60 * (60 / FlxG.save.data.fpsCap));
 
-		var versionShit:FlxText = new FlxText(5, FlxG.height - 18, 0, gameVer + (Main.watermarks ? " FNF - " + kadeEngineVer + " Kade Engine" : ""), 12);
+		var versionShit:FlxText = new FlxText(5, FlxG.height - 18, 0, gameVer + (Main.watermarks ? " FNF - " + mixEngineVer + " Mix Engine" : ""), 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);

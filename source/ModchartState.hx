@@ -39,7 +39,7 @@ class ModchartState {
 
 		if (e != null) {
 			if (p != null) {
-				Application.current.window.alert("LUA ERROR:\n" + p + "\nhaxe things: " + e, "Kade Engine Modcharts");
+				Application.current.window.alert("LUA ERROR:\n" + p + "\nhaxe things: " + e, "Mix Engine Modcharts");
 				lua = null;
 				LoadingState.loadAndSwitchState(new MainMenuState());
 			}
@@ -362,7 +362,7 @@ class ModchartState {
 		var result = LuaL.dofile(lua, Paths.lua(songLowercase + "/modchart")); // execute le file
 
 		if (result != 0) {
-			Application.current.window.alert("LUA COMPILE ERROR:\n" + Lua.tostring(lua, result), "Kade Engine Modcharts");
+			Application.current.window.alert("LUA COMPILE ERROR:\n" + Lua.tostring(lua, result), "Mix Engine Modcharts");
 			lua = null;
 			LoadingState.loadAndSwitchState(new MainMenuState());
 		}

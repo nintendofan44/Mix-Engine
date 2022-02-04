@@ -43,7 +43,6 @@ class OptionsMenu extends MusicBeatState {
 			#if desktop
 			new RainbowFPSOption("Make the FPS Counter Rainbow"), new AccuracyOption("Display accuracy information."),
 			new NPSDisplayOption("Shows your current Notes Per Second."), new SongPositionOption("Show the songs current position (as a bar)"),
-			new CpuStrums("CPU's strumline lights up when a note hits it."),
 			#end
 		]),
 		new OptionCategory("Misc", [
@@ -53,7 +52,6 @@ class OptionsMenu extends MusicBeatState {
 			new WatermarkOption("Enable and disable all watermarks from the engine."),
 			new ScoreScreen("Show the score screen after the end of a song"),
 			new ShowInput("Display every single input in the score screen."),
-			new Optimization("No backgrounds, no characters, centered notes, no player 2."),
 			new BotPlay("Showcase your charts and mods with autoplay."),
 		])
 	];

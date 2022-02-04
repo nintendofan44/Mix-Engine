@@ -32,9 +32,12 @@ class GameplayCustomizeState extends MusicBeatState {
 	var dad:Character;
 
 	var strumLine:FlxSprite;
-	var strumLineNotes:FlxTypedGroup<FlxSprite>;
-	var playerStrums:FlxTypedGroup<FlxSprite>;
+	var strumLineNotes:FlxTypedGroup<StaticArrow>;
+	var playerStrums:FlxTypedGroup<StaticArrow>;
 	private var camHUD:FlxCamera;
+
+	private var dataSuffix:Array<String> = ['LEFT', 'DOWN', 'UP', 'RIGHT'];
+	private var dataColor:Array<String> = ['purple', 'blue', 'green', 'red'];
 
 	public override function create() {
 		#if windows
@@ -48,7 +51,7 @@ class GameplayCustomizeState extends MusicBeatState {
 		curt = new FlxSprite(-500, -300).loadGraphic(Paths.image('stagecurtains', 'shared'));
 		front = new FlxSprite(-650, 600).loadGraphic(Paths.image('stagefront', 'shared'));
 
-		Conductor.changeBPM(102);
+		//Conductor.changeBPM(102);
 		persistentUpdate = true;
 
 		super.create();
@@ -96,10 +99,10 @@ class GameplayCustomizeState extends MusicBeatState {
 		if (FlxG.save.data.downscroll)
 			strumLine.y = FlxG.height - 165;
 
-		strumLineNotes = new FlxTypedGroup<FlxSprite>();
+		strumLineNotes = new FlxTypedGroup<StaticArrow>();
 		add(strumLineNotes);
 
-		playerStrums = new FlxTypedGroup<FlxSprite>();
+		playerStrums = new FlxTypedGroup<StaticArrow>();
 
 		sick.cameras = [camHUD];
 		strumLine.cameras = [camHUD];
@@ -190,36 +193,24 @@ class GameplayCustomizeState extends MusicBeatState {
 	private function generateStaticArrows(player:Int):Void {
 		for (i in 0...4) {
 			// FlxG.log.add(i);
-			var babyArrow:FlxSprite = new FlxSprite(0, strumLine.y);
-			babyArrow.frames = Paths.getSparrowAtlas('NOTE_assets', 'shared');
-			babyArrow.animation.addByPrefix('green', 'arrowUP');
-			babyArrow.animation.addByPrefix('blue', 'arrowDOWN');
-			babyArrow.animation.addByPrefix('purple', 'arrowLEFT');
-			babyArrow.animation.addByPrefix('red', 'arrowRIGHT');
+			var babyArrow:StaticArrow = new StaticArrow(0, strumLine.y);
+
+			babyArrow.frames = Paths.getSparrowAtlas('Arrows', 'shared');
+			for (j in 0...4) {
+				babyArrow.animation.addByPrefix(dataColor[j], 'arrow' + dataSuffix[j]);
+				babyArrow.animation.addByPrefix('dirCon' + j, dataSuffix[j].toLowerCase() + ' confirm', 24, false);
+			}
+
+			var lowerDir:String = dataSuffix[i].toLowerCase();
+
+			babyArrow.animation.addByPrefix('static', 'arrow' + dataSuffix[i]);
+			babyArrow.animation.addByPrefix('pressed', lowerDir + ' press', 24, false);
+			babyArrow.animation.addByPrefix('confirm', lowerDir + ' confirm', 24, false);
+
+			babyArrow.x += Note.swagWidth * i;
+
 			babyArrow.antialiasing = true;
 			babyArrow.setGraphicSize(Std.int(babyArrow.width * 0.7));
-			switch (Math.abs(i)) {
-				case 0:
-					babyArrow.x += Note.swagWidth * 0;
-					babyArrow.animation.addByPrefix('static', 'arrowLEFT');
-					babyArrow.animation.addByPrefix('pressed', 'left press', 24, false);
-					babyArrow.animation.addByPrefix('confirm', 'left confirm', 24, false);
-				case 1:
-					babyArrow.x += Note.swagWidth * 1;
-					babyArrow.animation.addByPrefix('static', 'arrowDOWN');
-					babyArrow.animation.addByPrefix('pressed', 'down press', 24, false);
-					babyArrow.animation.addByPrefix('confirm', 'down confirm', 24, false);
-				case 2:
-					babyArrow.x += Note.swagWidth * 2;
-					babyArrow.animation.addByPrefix('static', 'arrowUP');
-					babyArrow.animation.addByPrefix('pressed', 'up press', 24, false);
-					babyArrow.animation.addByPrefix('confirm', 'up confirm', 24, false);
-				case 3:
-					babyArrow.x += Note.swagWidth * 3;
-					babyArrow.animation.addByPrefix('static', 'arrowRIGHT');
-					babyArrow.animation.addByPrefix('pressed', 'right press', 24, false);
-					babyArrow.animation.addByPrefix('confirm', 'right confirm', 24, false);
-			}
 			babyArrow.updateHitbox();
 			babyArrow.scrollFactor.set();
 

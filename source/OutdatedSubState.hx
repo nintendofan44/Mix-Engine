@@ -36,8 +36,8 @@ class OutdatedSubState extends MusicBeatState {
 		add(kadeLogo);
 
 		var txt:FlxText = new FlxText(0, 0, FlxG.width,
-			"Your Kade Engine is outdated!\nYou are on "
-			+ MainMenuState.kadeEngineVer
+			"Your Mix Engine is outdated!\nYou are on "
+			+ MainMenuState.mixEngineVer
 			+ "\nwhile the most recent version is "
 			+ needVer
 			+ "."

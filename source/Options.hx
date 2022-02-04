@@ -96,24 +96,6 @@ class DFJKOption extends Option {
 	}
 }
 
-class CpuStrums extends Option {
-	public function new(desc:String) {
-		super();
-		description = desc;
-	}
-
-	public override function press():Bool {
-		FlxG.save.data.cpuStrums = !FlxG.save.data.cpuStrums;
-
-		display = updateDisplay();
-		return true;
-	}
-
-	private override function updateDisplay():String {
-		return FlxG.save.data.cpuStrums ? "Light CPU Strums" : "CPU Strums stay static";
-	}
-}
-
 class DownscrollOption extends Option {
 	public function new(desc:String) {
 		super();
@@ -442,23 +424,6 @@ class RainbowFPSOption extends Option {
 
 	private override function updateDisplay():String {
 		return "FPS Rainbow " + (!FlxG.save.data.fpsRain ? "off" : "on");
-	}
-}
-
-class Optimization extends Option {
-	public function new(desc:String) {
-		super();
-		description = desc;
-	}
-
-	public override function press():Bool {
-		FlxG.save.data.optimize = !FlxG.save.data.optimize;
-		display = updateDisplay();
-		return true;
-	}
-
-	private override function updateDisplay():String {
-		return "Optimization " + (FlxG.save.data.optimize ? "ON" : "OFF");
 	}
 }
 

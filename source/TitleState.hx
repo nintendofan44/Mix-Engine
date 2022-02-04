@@ -94,7 +94,7 @@ class TitleState extends MusicBeatState {
 
 		FlxG.save.bind('funkin', 'ninjamuffin99');
 
-		KadeEngineData.initSave();
+		MixEngineData.initSave();
 
 		// var file:SMFile = SMFile.loadFile("file.sm");
 		// this was testing things
@@ -275,7 +275,7 @@ class TitleState extends MusicBeatState {
 			// FlxG.sound.music.stop();
 
 			new FlxTimer().start(2, function(tmr:FlxTimer) {
-				// Get current version of Kade Engine
+				// Get current version of Mix Engine
 
 				var http = new haxe.Http("https://raw.githubusercontent.com/KadeDev/Kade-Engine/master/version.downloadMe");
 				var returnedData:Array<String> = [];
@@ -283,10 +283,10 @@ class TitleState extends MusicBeatState {
 				http.onData = function(data:String) {
 					returnedData[0] = data.substring(0, data.indexOf(';'));
 					returnedData[1] = data.substring(data.indexOf('-'), data.length);
-					if (!MainMenuState.kadeEngineVer.contains(returnedData[0].trim())
+					if (!MainMenuState.mixEngineVer.contains(returnedData[0].trim())
 						&& !OutdatedSubState.leftState
 						&& MainMenuState.nightly == "") {
-						trace('outdated lmao! ' + returnedData[0] + ' != ' + MainMenuState.kadeEngineVer);
+						trace('outdated lmao! ' + returnedData[0] + ' != ' + MainMenuState.mixEngineVer);
 						OutdatedSubState.needVer = returnedData[0];
 						OutdatedSubState.currChanges = returnedData[1];
 						FlxG.switchState(new OutdatedSubState());
@@ -367,12 +367,12 @@ class TitleState extends MusicBeatState {
 			// credTextShit.screenCenter();
 			case 5:
 				if (Main.watermarks)
-					createCoolText(['Kade Engine', 'by']);
+					createCoolText(['Mix Engine', 'by']);
 				else
 					createCoolText(['In Partnership', 'with']);
 			case 7:
 				if (Main.watermarks)
-					addMoreText('KadeDeveloper');
+					addMoreText('nintendofan44');
 				else {
 					addMoreText('Newgrounds');
 					ngSpr.visible = true;
