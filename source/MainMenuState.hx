@@ -35,8 +35,6 @@ class MainMenuState extends MusicBeatState {
 	var newGaming:FlxText;
 	var newGaming2:FlxText;
 
-	public static var firstStart:Bool = true;
-
 	public static var nightly:String = "";
 
 	public static var kadeEngineVer:String = "1.5.4" + nightly;
@@ -99,19 +97,14 @@ class MainMenuState extends MusicBeatState {
 			menuItems.add(menuItem);
 			menuItem.scrollFactor.set();
 			menuItem.antialiasing = true;
-			if (firstStart)
-				FlxTween.tween(menuItem, {y: 60 + (i * 160)}, 1 + (i * 0.25), {
-					ease: FlxEase.expoInOut,
-					onComplete: function(flxTween:FlxTween) {
-						finishedFunnyMove = true;
-						changeItem();
-					}
-				});
-			else
-				menuItem.y = 60 + (i * 160);
+			FlxTween.tween(menuItem, {y: 60 + (i * 160)}, 1 + (i * 0.25), {
+				ease: FlxEase.expoInOut,
+				onComplete: function(flxTween:FlxTween) {
+					finishedFunnyMove = true;
+					changeItem();
+				}
+			});
 		}
-
-		firstStart = false;
 
 		FlxG.camera.follow(camFollow, null, 0.60 * (60 / FlxG.save.data.fpsCap));
 
@@ -164,12 +157,12 @@ class MainMenuState extends MusicBeatState {
 			}
 
 			if (controls.BACK) {
-				FlxG.switchState(new TitleState());
+				MusicBeatState.switchState(new TitleState());
 			}
 
 			if (controls.ACCEPT) {
 				if (optionShit[curSelected] == 'donate') {
-					fancyOpenURL("https://ninja-muffin24.itch.io/funkin");
+					CoolUtil.browserLoad("https://ninja-muffin24.itch.io/funkin");
 				}
 				else {
 					selectedSomethin = true;
@@ -186,6 +179,9 @@ class MainMenuState extends MusicBeatState {
 									spr.kill();
 								}
 							});
+							for (i in 0...optionShit.length) {
+								FlxTween.tween(spr, {y: FlxG.height * 1.6}, 1 + (i * 0.25), {ease: FlxEase.expoInOut});
+							}
 						}
 						else {
 							if (FlxG.save.data.flashing) {
@@ -216,15 +212,15 @@ class MainMenuState extends MusicBeatState {
 
 		switch (daChoice) {
 			case 'story mode':
-				FlxG.switchState(new StoryMenuState());
+				MusicBeatState.switchState(new StoryMenuState());
 				trace("Story Menu Selected");
 			case 'freeplay':
-				FlxG.switchState(new FreeplayState());
+				MusicBeatState.switchState(new FreeplayState());
 
 				trace("Freeplay Menu Selected");
 
 			case 'options':
-				FlxG.switchState(new OptionsMenu());
+				MusicBeatState.switchState(new OptionsMenu());
 		}
 	}
 
@@ -243,6 +239,7 @@ class MainMenuState extends MusicBeatState {
 			if (spr.ID == curSelected && finishedFunnyMove) {
 				spr.animation.play('selected');
 				camFollow.setPosition(spr.getGraphicMidpoint().x, spr.getGraphicMidpoint().y);
+				spr.centerOffsets();
 			}
 
 			spr.updateHitbox();

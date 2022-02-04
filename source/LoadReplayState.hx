@@ -123,7 +123,7 @@ class LoadReplayState extends MusicBeatState {
 		super.update(elapsed);
 
 		if (controls.BACK)
-			FlxG.switchState(new OptionsMenu());
+			MusicBeatState.switchState(new OptionsMenu());
 		if (controls.UP_P)
 			changeSelection(-1);
 		if (controls.DOWN_P)

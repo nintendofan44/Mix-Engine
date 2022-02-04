@@ -78,6 +78,13 @@ class Main extends Sprite {
 		addChild(fpsCounter);
 		toggleFPS(FlxG.save.data.fps);
 		#end
+
+		FlxG.autoPause = false;
+
+		#if html5
+		FlxG.autoPause = false;
+		FlxG.mouse.visible = false;
+		#end
 	}
 
 	var game:FlxGame;

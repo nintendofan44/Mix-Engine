@@ -1,5 +1,6 @@
 package;
 
+import Song.SwagSong;
 import flixel.input.gamepad.FlxGamepad;
 import flash.text.TextField;
 import flixel.FlxG;
@@ -35,12 +36,32 @@ class FreeplayState extends MusicBeatState {
 
 	private var iconArray:Array<HealthIcon> = [];
 
+	public static var songData:Map<String, Array<SwagSong>> = [];
+
+	public static function loadDiff(diff:Int, name:String, array:Array<SwagSong>) {
+		try {
+			array.push(Song.loadFromJson(Highscore.formatSong(name, diff), name));
+		}
+		catch (ex) {
+			// do nada
+		}
+	}
+
 	override function create() {
 		var initSonglist = CoolUtil.coolTextFile(Paths.txt('freeplaySonglist'));
 
 		for (i in 0...initSonglist.length) {
 			var data:Array<String> = initSonglist[i].split(':');
-			songs.push(new SongMetadata(data[0], Std.parseInt(data[2]), data[1]));
+			var meta = new SongMetadata(data[0], Std.parseInt(data[2]), data[1]);
+
+			//if ((Std.parseInt(data[2]) <= FlxG.save.data.weekUnlocked - 1) || (Std.parseInt(data[2]) == 1))
+				songs.push(meta);
+
+			var diffs = [];
+			for (i in 0...2) {
+				loadDiff(i, meta.songName, diffs);
+			}
+			songData.set(meta.songName, diffs);
 		}
 
 		/* 
@@ -73,7 +94,7 @@ class FreeplayState extends MusicBeatState {
 		add(grpSongs);
 
 		for (i in 0...songs.length) {
-			var songText:Alphabet = new Alphabet(0, (70 * i) + 30, songs[i].songName, true, false, true);
+			var songText:Alphabet = new Alphabet(0, (70 * i) + 30, songs[i].songName, true, false);
 			songText.alphabetType = "Classic";
 			songText.targetY = i;
 			grpSongs.add(songText);
@@ -160,7 +181,8 @@ class FreeplayState extends MusicBeatState {
 	}
 
 	override function update(elapsed:Float) {
-		super.update(elapsed);
+		if (FlxG.sound.music != null)
+			Conductor.songPosition = FlxG.sound.music.time;
 
 		if (FlxG.sound.music.volume < 0.7) {
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
@@ -172,6 +194,9 @@ class FreeplayState extends MusicBeatState {
 			lerpScore = intendedScore;
 
 		scoreText.text = "PERSONAL BEST:" + lerpScore;
+
+		FlxG.camera.zoom = FlxMath.lerp(1, FlxG.camera.zoom, CoolUtil.boundTo(1 - (elapsed * 3.125), 0, 1));
+
 		comboText.text = combo + '\n';
 
 		var upP = FlxG.keys.justPressed.UP;
@@ -208,7 +233,7 @@ class FreeplayState extends MusicBeatState {
 			changeDiff(1);
 
 		if (controls.BACK) {
-			FlxG.switchState(new MainMenuState());
+			MusicBeatState.switchState(new MainMenuState());
 		}
 
 		if (accepted) {
@@ -234,6 +259,25 @@ class FreeplayState extends MusicBeatState {
 			trace('CUR WEEK' + PlayState.storyWeek);
 			LoadingState.loadAndSwitchState(new PlayState());
 		}
+
+		super.update(elapsed);
+
+		for (i in 0...iconArray.length) {
+			var mult:Float = FlxMath.lerp(1, iconArray[i].scale.x, CoolUtil.boundTo(1 - (elapsed * 9), 0, 1)); // playstate code lol -nintendofan44
+			iconArray[i].scale.set(mult, mult);
+			iconArray[i].updateHitbox();
+		}
+	}
+
+	override function beatHit() {
+		super.beatHit();
+
+		var mult:Float = 1.2; // also playstate code lol -nintendofan44
+		iconArray[curSelected].scale.set(mult, mult);
+		iconArray[curSelected].updateHitbox();
+
+		if (FlxG.camera.zoom < 1.35 && curBeat % 1 == 0)
+			FlxG.camera.zoom += 0.015;
 	}
 
 	function changeDiff(change:Int = 0) {
@@ -297,6 +341,16 @@ class FreeplayState extends MusicBeatState {
 		#if PRELOAD_ALL
 		FlxG.sound.playMusic(Paths.inst(songs[curSelected].songName), 0);
 		#end
+
+		var hmm;
+		try {
+			hmm = songData.get(songs[curSelected].songName)[curDifficulty];
+			if (hmm != null) {
+				Conductor.changeBPM(hmm.bpm);
+			}
+		}
+		catch (ex) {
+		}
 
 		var bullShit:Int = 0;
 

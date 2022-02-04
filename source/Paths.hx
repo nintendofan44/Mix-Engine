@@ -87,7 +87,9 @@ class Paths {
 			case 'philly-nice':
 				songLowercase = 'philly';
 		}
-		return 'songs:assets/songs/${songLowercase}/Voices.$SOUND_EXT';
+		var result = 'songs:assets/songs/${songLowercase}/Voices.$SOUND_EXT';
+		// Return null if the file does not exist.
+		return doesSoundAssetExist(result) ? result : null;
 	}
 
 	inline static public function inst(song:String) {
@@ -99,6 +101,47 @@ class Paths {
 				songLowercase = 'philly';
 		}
 		return 'songs:assets/songs/${songLowercase}/Inst.$SOUND_EXT';
+	}
+
+	inline static public function fileExists(key:String, type:AssetType, ?library:String) {
+		if (OpenFlAssets.exists(Paths.getPath(key, type, library))) {
+			return true;
+		}
+		return false;
+	}
+
+	static public function listSongsToCache() {
+		// We need to query OpenFlAssets, not the file system, because of Polymod.
+		var soundAssets = OpenFlAssets.list(AssetType.MUSIC).concat(OpenFlAssets.list(AssetType.SOUND));
+
+		// TODO: Maybe rework this to pull from a text file rather than scan the list of assets.
+		var songNames = [];
+
+		for (sound in soundAssets) {
+			// Parse end-to-beginning to support mods.
+			var path = sound.split('/');
+			path.reverse();
+
+			var fileName = path[0];
+			var songName = path[1];
+
+			if (path[2] != 'songs')
+				continue;
+
+			// Remove duplicates.
+			if (songNames.indexOf(songName) != -1)
+				continue;
+
+			songNames.push(songName);
+		}
+
+		return songNames;
+	}
+
+	static public function doesSoundAssetExist(path:String) {
+		if (path == null || path == "")
+			return false;
+		return OpenFlAssets.exists(path, AssetType.SOUND) || OpenFlAssets.exists(path, AssetType.MUSIC);
 	}
 
 	inline static public function image(key:String, ?library:String) {
