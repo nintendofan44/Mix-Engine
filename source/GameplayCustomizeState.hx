@@ -32,8 +32,8 @@ class GameplayCustomizeState extends MusicBeatState {
 	var dad:Character;
 
 	var strumLine:FlxSprite;
-	var strumLineNotes:FlxTypedGroup<StaticArrow>;
-	var playerStrums:FlxTypedGroup<StaticArrow>;
+	var strumLineNotes:FlxTypedGroup<StrumArrow>;
+	var playerStrums:FlxTypedGroup<StrumArrow>;
 	private var camHUD:FlxCamera;
 
 	private var dataSuffix:Array<String> = ['LEFT', 'DOWN', 'UP', 'RIGHT'];
@@ -51,7 +51,7 @@ class GameplayCustomizeState extends MusicBeatState {
 		curt = new FlxSprite(-500, -300).loadGraphic(Paths.image('stagecurtains', 'shared'));
 		front = new FlxSprite(-650, 600).loadGraphic(Paths.image('stagefront', 'shared'));
 
-		//Conductor.changeBPM(102);
+		// Conductor.changeBPM(102);
 		persistentUpdate = true;
 
 		super.create();
@@ -99,10 +99,10 @@ class GameplayCustomizeState extends MusicBeatState {
 		if (FlxG.save.data.downscroll)
 			strumLine.y = FlxG.height - 165;
 
-		strumLineNotes = new FlxTypedGroup<StaticArrow>();
+		strumLineNotes = new FlxTypedGroup<StrumArrow>();
 		add(strumLineNotes);
 
-		playerStrums = new FlxTypedGroup<StaticArrow>();
+		playerStrums = new FlxTypedGroup<StrumArrow>();
 
 		sick.cameras = [camHUD];
 		strumLine.cameras = [camHUD];
@@ -193,37 +193,13 @@ class GameplayCustomizeState extends MusicBeatState {
 	private function generateStaticArrows(player:Int):Void {
 		for (i in 0...4) {
 			// FlxG.log.add(i);
-			var babyArrow:StaticArrow = new StaticArrow(0, strumLine.y);
-
-			babyArrow.frames = Paths.getSparrowAtlas('Arrows', 'shared');
-			for (j in 0...4) {
-				babyArrow.animation.addByPrefix(dataColor[j], 'arrow' + dataSuffix[j]);
-				babyArrow.animation.addByPrefix('dirCon' + j, dataSuffix[j].toLowerCase() + ' confirm', 24, false);
-			}
-
-			var lowerDir:String = dataSuffix[i].toLowerCase();
-
-			babyArrow.animation.addByPrefix('static', 'arrow' + dataSuffix[i]);
-			babyArrow.animation.addByPrefix('pressed', lowerDir + ' press', 24, false);
-			babyArrow.animation.addByPrefix('confirm', lowerDir + ' confirm', 24, false);
-
-			babyArrow.x += Note.swagWidth * i;
-
-			babyArrow.antialiasing = true;
-			babyArrow.setGraphicSize(Std.int(babyArrow.width * 0.7));
-			babyArrow.updateHitbox();
-			babyArrow.scrollFactor.set();
-
-			babyArrow.ID = i;
+			var babyArrow:StrumArrow = new StrumArrow(0, strumLine.y, i, player);
 
 			if (player == 1)
 				playerStrums.add(babyArrow);
 
-			babyArrow.animation.play('static');
-			babyArrow.x += 50;
-			babyArrow.x += ((FlxG.width / 2) * player);
-
 			strumLineNotes.add(babyArrow);
+			babyArrow.postAddedToGroup();
 		}
 	}
 }

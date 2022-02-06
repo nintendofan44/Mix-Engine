@@ -38,7 +38,6 @@ class OptionsMenu extends MusicBeatState {
 			new CustomizeGameplay("Drag'n'Drop Gameplay Modules around to your preference")
 		]),
 		new OptionCategory("Appearance", [
-			new DistractionsAndEffectsOption("Toggle stage distractions that can hinder your gameplay."),
 			new CamZoomOption("Toggle the camera zoom in-game."),
 			#if desktop
 			new RainbowFPSOption("Make the FPS Counter Rainbow"), new AccuracyOption("Display accuracy information."),

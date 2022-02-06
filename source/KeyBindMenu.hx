@@ -18,7 +18,6 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import io.newgrounds.NG;
 import lime.app.Application;
-import lime.utils.Assets;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.input.FlxKeyManager;
@@ -40,14 +39,16 @@ class KeyBindMenu extends FlxSubState {
 		FlxG.save.data.upBind,
 		FlxG.save.data.rightBind
 	];
+
 	var gpKeys:Array<String> = [
 		FlxG.save.data.gpleftBind,
 		FlxG.save.data.gpdownBind,
 		FlxG.save.data.gpupBind,
 		FlxG.save.data.gprightBind
 	];
+
 	var tempKey:String = "";
-	var blacklist:Array<String> = ["ESCAPE", "ENTER", "BACKSPACE", "SPACE", "TAB"];
+	var blacklist:Array<String> = ["ESCAPE", "BACKSPACE", "SPACE", "TAB"];
 
 	var blackBox:FlxSprite;
 	var infoText:FlxText;
@@ -66,8 +67,6 @@ class KeyBindMenu extends FlxSubState {
 			if (k == null)
 				gpKeys[i] = defaultGpKeys[i];
 		}
-
-		// FlxG.sound.playMusic('assets/music/configurator' + TitleState.soundExt);
 
 		persistentUpdate = true;
 
@@ -168,10 +167,14 @@ class KeyBindMenu extends FlxSubState {
 				}
 
 			case "input":
-				tempKey = keys[curSelected];
-				keys[curSelected] = "?";
-				if (KeyBinds.gamepad)
+				if (KeyBinds.gamepad) {
+					tempKey = gpKeys[curSelected];
 					gpKeys[curSelected] = "?";
+				}
+				else {
+					tempKey = keys[curSelected];
+					keys[curSelected] = "?";
+				}
 				textUpdate();
 				state = "waiting";
 
@@ -234,7 +237,6 @@ class KeyBindMenu extends FlxSubState {
 		if (KeyBinds.gamepad) {
 			for (i in 0...4) {
 				var textStart = (i == curSelected) ? "> " : "  ";
-				trace(gpKeys[i]);
 				keyTextDisplay.text += textStart + keyText[i] + ": " + gpKeys[i] + "\n";
 			}
 		}
@@ -288,35 +290,48 @@ class KeyBindMenu extends FlxSubState {
 	function addKeyGamepad(r:String) {
 		var shouldReturn:Bool = true;
 
-		var notAllowed:Array<String> = ["START", "RIGHT_TRIGGER", "LEFT_TRIGGER"];
+		var notAllowed:Array<String> = ["START"];
+		var swapKey:Int = -1;
 
 		for (x in 0...gpKeys.length) {
 			var oK = gpKeys[x];
-			if (oK == r)
+			if (oK == r) {
+				swapKey = x;
 				gpKeys[x] = null;
+			}
 			if (notAllowed.contains(oK)) {
 				gpKeys[x] = null;
+				lastKey = r;
 				return;
 			}
 		}
 
+		if (notAllowed.contains(r)) {
+			gpKeys[curSelected] = tempKey;
+			lastKey = r;
+			return;
+		}
+
 		if (shouldReturn) {
+			if (swapKey != -1) {
+				gpKeys[swapKey] = tempKey;
+			}
 			gpKeys[curSelected] = r;
 			FlxG.sound.play(Paths.sound('scrollMenu'));
 		}
 		else {
 			gpKeys[curSelected] = tempKey;
-			FlxG.sound.play(Paths.sound('scrollMenu'));
-			keyWarning.alpha = 1;
-			warningTween.cancel();
-			warningTween = FlxTween.tween(keyWarning, {alpha: 0}, 0.5, {ease: FlxEase.circOut, startDelay: 2});
+			lastKey = r;
 		}
 	}
+
+	public var lastKey:String = "";
 
 	function addKey(r:String) {
 		var shouldReturn:Bool = true;
 
 		var notAllowed:Array<String> = [];
+		var swapKey:Int = -1;
 
 		for (x in blacklist) {
 			notAllowed.push(x);
@@ -326,29 +341,36 @@ class KeyBindMenu extends FlxSubState {
 
 		for (x in 0...keys.length) {
 			var oK = keys[x];
-			if (oK == r)
+			if (oK == r) {
+				swapKey = x;
 				keys[x] = null;
+			}
 			if (notAllowed.contains(oK)) {
 				keys[x] = null;
+				lastKey = oK;
 				return;
 			}
 		}
 
-		if (r.contains("NUMPAD")) {
-			keys[curSelected] = null;
+		if (notAllowed.contains(r)) {
+			keys[curSelected] = tempKey;
+			lastKey = r;
 			return;
 		}
 
+		lastKey = "";
+
 		if (shouldReturn) {
+			// Swap keys instead of setting the other one as null
+			if (swapKey != -1) {
+				keys[swapKey] = tempKey;
+			}
 			keys[curSelected] = r;
 			FlxG.sound.play(Paths.sound('scrollMenu'));
 		}
 		else {
 			keys[curSelected] = tempKey;
-			FlxG.sound.play(Paths.sound('scrollMenu'));
-			keyWarning.alpha = 1;
-			warningTween.cancel();
-			warningTween = FlxTween.tween(keyWarning, {alpha: 0}, 0.5, {ease: FlxEase.circOut, startDelay: 2});
+			lastKey = r;
 		}
 	}
 

@@ -10,11 +10,16 @@ using StringTools;
 class Character extends FlxSprite {
 	public var animOffsets:Map<String, Array<Dynamic>>;
 	public var debugMode:Bool = false;
+	public var stunned:Bool = false;
+	public var danceIdle:Bool = false; // Character use "danceLeft" and "danceRight" instead of "idle"
+	public var idleSuffix:String = '';
+	public var specialAnim:Bool = false;
 
 	public var isPlayer:Bool = false;
 	public var curCharacter:String = 'bf';
 
 	public var holdTimer:Float = 0;
+	public var heyTimer:Float = 0;
 
 	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false) {
 		super(x, y);
@@ -123,11 +128,11 @@ class Character extends FlxSprite {
 				// DAD ANIMATION LOADING CODE
 				tex = Paths.getSparrowAtlas('characters/DADDY_DEAREST', 'shared');
 				frames = tex;
-				animation.addByPrefix('idle', 'Dad idle dance', 24);
-				animation.addByPrefix('singUP', 'Dad Sing Note UP', 24);
-				animation.addByPrefix('singRIGHT', 'Dad Sing Note RIGHT', 24);
-				animation.addByPrefix('singDOWN', 'Dad Sing Note DOWN', 24);
-				animation.addByPrefix('singLEFT', 'Dad Sing Note LEFT', 24);
+				animation.addByPrefix('idle', 'Dad idle dance', 24, false);
+				animation.addByPrefix('singUP', 'Dad Sing Note UP', 24, false);
+				animation.addByPrefix('singRIGHT', 'Dad Sing Note RIGHT', 24, false);
+				animation.addByPrefix('singDOWN', 'Dad Sing Note DOWN', 24, false);
+				animation.addByPrefix('singLEFT', 'Dad Sing Note LEFT', 24, false);
 
 				addOffset('idle');
 				addOffset("singUP", -6, 50);
@@ -227,7 +232,7 @@ class Character extends FlxSprite {
 			case 'pico':
 				tex = Paths.getSparrowAtlas('characters/Pico_FNF_assetss');
 				frames = tex;
-				animation.addByPrefix('idle', "Pico Idle Dance", 24);
+				animation.addByPrefix('idle', "Pico Idle Dance", 24, false);
 				animation.addByPrefix('singUP', 'pico Up note0', 24, false);
 				animation.addByPrefix('singDOWN', 'Pico Down Note0', 24, false);
 				if (isPlayer) {
@@ -449,7 +454,7 @@ class Character extends FlxSprite {
 
 			case 'spirit':
 				frames = Paths.getPackerAtlas('characters/spirit');
-				animation.addByPrefix('idle', "idle spirit_", 24, false);
+				animation.addByPrefix('idle', "idle spirit_", 24);
 				animation.addByPrefix('singUP', "up_", 24, false);
 				animation.addByPrefix('singRIGHT', "right_", 24, false);
 				animation.addByPrefix('singLEFT', "left_", 24, false);
@@ -495,6 +500,7 @@ class Character extends FlxSprite {
 				playAnim('idle');
 		}
 
+		recalculateDanceIdle();
 		dance();
 
 		if (isPlayer) {
@@ -518,28 +524,45 @@ class Character extends FlxSprite {
 	}
 
 	override function update(elapsed:Float) {
-		if (!curCharacter.startsWith('bf')) {
-			if (animation.curAnim.name.startsWith('sing')) {
-				holdTimer += elapsed;
+		if (!debugMode && animation.curAnim != null) {
+			if (heyTimer > 0) {
+				heyTimer -= elapsed;
+				if (heyTimer <= 0) {
+					if (specialAnim && animation.curAnim.name == 'hey' || animation.curAnim.name == 'cheer') {
+						specialAnim = false;
+						dance();
+					}
+					heyTimer = 0;
+				}
+			}
+			else if (specialAnim && animation.curAnim.finished) {
+				specialAnim = false;
+				dance();
+			} else if (specialAnim && animation.curAnim.name == 'hairBlow' && animation.curAnim.finished) {
+				specialAnim = false;
+				playAnim('danceRight');
 			}
 
 			var dadVar:Float = 4;
 
 			if (curCharacter == 'dad')
 				dadVar = 6.1;
-			if (holdTimer >= Conductor.stepCrochet * dadVar * 0.001) {
-				trace('dance');
-				dance();
-				holdTimer = 0;
+
+			if (!isPlayer) {
+				if (animation.curAnim.name.startsWith('sing')) {
+					holdTimer += elapsed;
+				}
+
+				if (holdTimer >= Conductor.stepCrochet * dadVar * 0.001) {
+					dance();
+					holdTimer = 0;
+				}
+			}
+
+			if (animation.curAnim.finished && animation.getByName(animation.curAnim.name + '-loop') != null) {
+				playAnim(animation.curAnim.name + '-loop');
 			}
 		}
-
-		switch (curCharacter) {
-			case 'gf':
-				if (animation.curAnim.name == 'hairFall' && animation.curAnim.finished)
-					playAnim('danceRight');
-		}
-
 		super.update(elapsed);
 	}
 
@@ -549,6 +572,22 @@ class Character extends FlxSprite {
 	 * FOR GF DANCING SHIT
 	 */
 	public function dance() {
+		if (!debugMode && !specialAnim) {
+			if (danceIdle) {
+				danced = !danced;
+
+				if (danced)
+					playAnim('danceRight' + idleSuffix);
+				else
+					playAnim('danceLeft' + idleSuffix);
+			}
+			else if (animation.getByName('idle' + idleSuffix) != null) {
+				playAnim('idle' + idleSuffix);
+			}
+		}
+	}
+
+	public function olddance() { // keping this here for character that have some type of effect, like retrospecter with chromatic aberration
 		if (!debugMode) {
 			switch (curCharacter) {
 				case 'gf':
@@ -604,6 +643,7 @@ class Character extends FlxSprite {
 	}
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void {
+		specialAnim = false;
 		animation.play(AnimName, Force, Reversed, Frame);
 
 		var daOffset = animOffsets.get(AnimName);
@@ -613,7 +653,7 @@ class Character extends FlxSprite {
 		else
 			offset.set(0, 0);
 
-		if (curCharacter == 'gf') {
+		if (curCharacter.startsWith('gf')) {
 			if (AnimName == 'singLEFT') {
 				danced = true;
 			}
@@ -627,7 +667,15 @@ class Character extends FlxSprite {
 		}
 	}
 
+	public function recalculateDanceIdle() {
+		danceIdle = (animation.getByName('danceLeft' + idleSuffix) != null && animation.getByName('danceRight' + idleSuffix) != null);
+	}
+
 	public function addOffset(name:String, x:Float = 0, y:Float = 0) {
 		animOffsets[name] = [x, y];
+	}
+
+	public function quickAnimAdd(name:String, anim:String) {
+		animation.addByPrefix(name, anim, 24, false);
 	}
 }

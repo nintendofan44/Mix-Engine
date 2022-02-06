@@ -117,7 +117,7 @@ class ModchartState {
 	}
 
 	private function convert(v:Any, type:String):Dynamic { // I didn't write this lol
-		if (Std.is(v, String) && type != null) {
+		if (Std.isOfType(v, String) && type != null) {
 			var v:String = v;
 			if (type.substr(0, 4) == 'array') {
 				if (type.substr(4) == 'float') {
@@ -375,7 +375,6 @@ class ModchartState {
 		setVar("fpsCap", FlxG.save.data.fpsCap);
 		setVar("downscroll", FlxG.save.data.downscroll);
 		setVar("flashing", FlxG.save.data.flashing);
-		setVar("distractions", FlxG.save.data.distractions);
 
 		setVar("curStep", 0);
 		setVar("curBeat", 0);

@@ -13,6 +13,13 @@ import PlayState;
 
 using StringTools;
 
+typedef EventNote = {
+	strumTime:Float,
+	event:String,
+	value1:String,
+	value2:String
+}
+
 class Note extends FlxSprite {
 	public var strumTime:Float = 0;
 
@@ -28,7 +35,10 @@ class Note extends FlxSprite {
 	public var rawNoteData:Int = 0;
 	public var isSustainNote:Bool = false;
 
-	public var noteYOff:Int = 0;
+	public var eventName:String = '';
+	public var eventLength:Int = 0;
+	public var eventVal1:String = '';
+	public var eventVal2:String = '';
 
 	public var modAngle:Float = 0; // The angle set by modcharts
 	public var localAngle:Float = 0; // The angle to be edited inside Note.hx
@@ -131,12 +141,7 @@ class Note extends FlxSprite {
 
 		// trace(prevNote);
 
-		var stepHeight = (((0.45 * Conductor.stepCrochet)) * FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? PlayState.SONG.speed : PlayStateChangeables.scrollSpeed,
-			2));
-
 		if (isSustainNote && prevNote != null) {
-			noteYOff = Math.round(-stepHeight + swagWidth * 0.5) + FlxG.save.data.offset + PlayState.songOffset;
-
 			alpha = 0.6;
 			if (FlxG.save.data.downscroll) flipY = true;
 
